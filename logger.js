@@ -8,7 +8,7 @@ const logger = winston.createLogger({
     winston.format.timestamp(),
     winston.format.json(),
   ),
-  defaultMeta: { service: 'publisher' },
+  defaultMeta: { service: 'subscriber' },
   transports: [
     new winston.transports.File({
       filename: './logs/error.log',
