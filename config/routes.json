@@ -1,0 +1,9 @@
+{
+  "baseDir": "{{moduleDir}}/{{moduleName}}/endpoints/",
+  "routes": "web.js",
+  "api": {
+    "filename": "api.js",
+    "prefix": "api",
+    "version": 1
+  }
+}
