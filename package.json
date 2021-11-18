@@ -1,0 +1,44 @@
+{
+  "name": "packet-pigeon-subscriber",
+  "version": "1.0.0",
+  "description": "A lightweight server for bi-directional communication",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node index.js",
+    "linter": "eslint . "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s1lv3rsph3r3/packet-pigeon-subscriber.git"
+  },
+  "author": "Timothy Rawlins",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/s1lv3rsph3r3/packet-pigeon-subscriber/issues"
+  },
+  "homepage": "https://github.com/s1lv3rsph3r3/packet-pigeon-subscriber#readme",
+  "dependencies": {
+    "@s1lv3rsph3r3/metropolitan": "^2.0.1",
+    "cli-table3": "^0.6.0",
+    "colors": "^1.4.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-list-endpoints": "^6.0.0",
+    "redis": "^3.1.2",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-markdown": "^2.2.1",
+    "jest": "^27.2.5",
+    "prettier": "2.4.1",
+    "supertest": "^6.1.6"
+  }
+}
