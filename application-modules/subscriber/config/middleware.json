@@ -1,0 +1,23 @@
+{
+  "module": {
+    "module": ["generateUniqueRequestId", "logRequest"]
+  },
+  "api": {
+    "umbrella": {},
+    "verbs": {
+      "get": {},
+      "post": {},
+      "put": {},
+      "delete": {}
+    }
+  },
+  "web": {
+    "umbrella": {},
+    "verbs": {
+      "get": {},
+      "post": {},
+      "put": {},
+      "delete": {}
+    }
+  }
+}
