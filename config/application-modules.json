@@ -1,0 +1,4 @@
+{
+  "baseDir": "application-modules",
+  "main": "{{moduleDir}}/{{moduleName}}/{{moduleMain}}"
+}
