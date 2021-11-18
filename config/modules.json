@@ -1,0 +1,9 @@
+{
+  "main": "bootloader.js",
+  "install": "config/self/self.json",
+  "modules": {
+    "subscriber": {
+      "slug": "subscriber"
+    }
+  }
+}
