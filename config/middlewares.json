@@ -1,0 +1,12 @@
+{
+  "app": {
+    "standard": ["standardMiddleware"]
+  },
+  "custom": {},
+  "globDir": "./global-middleware",
+  "cityConfig": "{{moduleDir}}/{{moduleName}}/config/middleware.json",
+  "moduleDir": "{{moduleDir}}/{{moduleName}}/middleware/",
+  "typeDir": "{{moduleDir}}/{{moduleName}}/middleware/{{type}}/",
+  "verbDir": "{{moduleDir}}/{{moduleName}}/middleware/{{type}}/verbs/",
+  "customDir": "{{moduleDir}}/{{moduleName}}/middleware/custom/"
+}
