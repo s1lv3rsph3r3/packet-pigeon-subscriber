@@ -9,3 +9,7 @@ const { Route } = require('@s1lv3rsph3r3/metropolitan');
  * A simple Web Route POST request
  *    => Route.post('/admin', (req, res) => { res.send('HELLO WORLD'); });
  */
+
+Route.get('/ping', (req, res) => {
+  return res.status(200).json('pong');
+});

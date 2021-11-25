@@ -10,6 +10,6 @@ const { Api } = require('@s1lv3rsph3r3/metropolitan');
  * A simple ping test for the API to validate that the server is ready to
  * receive messages - Only necessary for MVP for developers.
  */
-Api.post('/ping', (req, res) => {
-  res.status(200).json('pong');
+Api.get('/ping', (req, res) => {
+  return res.status(200).json('pong');
 });
