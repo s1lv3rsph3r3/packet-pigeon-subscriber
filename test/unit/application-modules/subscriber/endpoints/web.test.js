@@ -1,14 +1,15 @@
 const request = require('supertest');
 const app = require('../../../../../index');
 
-const agent = request(app);
-
 // A mock implementation of this module is in __mocks__
 jest.mock('../../../../../utility/os-bind-utility');
+jest.mock('../../../../../subscriber');
 
 describe('Test web endpoints in subscriber module', () => {
-  afterAll(() => {
-    app.close();
+  /* Setup the supertest agent for the application */
+  let agent;
+  beforeEach(() => {
+    agent = request(app);
   });
   test('expect a fail when running', async () => {
     const response = await agent
