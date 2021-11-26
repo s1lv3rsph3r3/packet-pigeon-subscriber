@@ -11,7 +11,7 @@ describe('Test api endpoints in subscriber module...', () => {
   beforeEach(() => {
     agent = request(app);
   });
-  test('expect a fail when running', async () => {
+  test('should expect 200 response with message', async () => {
     const response = await agent
       .get('/api/v1/subscriber/ping')
       .set('Accept', 'application/json');
