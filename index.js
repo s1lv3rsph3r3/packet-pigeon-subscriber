@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const socketIo = require('socket.io');
 const { server } = require('./server');
 const expressApp = require('./app');
 const {
@@ -32,21 +33,24 @@ startApiRouting(expressApp);
 /* This should take records from the database and subscribe to the channels */
 moduleSpecificBootloader();
 
-expressApp.use((req, res, next) => {
+expressApp.use((req, res) => {
   return res.status(418).json('Tea only thanks.');
 });
 
 // Handle IO connection here for 2 way
 // communication. This should eventually
 // be removed into another dependency.
-const io = require('socket.io')(httpServer);
+const io = socketIo(httpServer);
 
-io.on('connection', function (socket) {
+io.on('connection', function connectedSocket(socket) {
+  // eslint-disable-next-line no-console
   console.log(`${socket.id} : connected`);
-  socket.on('message', function (msg) {
+  socket.on('message', function socketMessage(msg) {
+    // eslint-disable-next-line no-console
     console.log(`message : ${msg} socket : ${socket.id}`);
   });
-  socket.on('disconnect', function () {
+  socket.on('disconnect', function socketDisconnect() {
+    // eslint-disable-next-line no-console
     console.log(`socket disconnected : ${socket.id}`);
   });
   socket.emit('message', 'Hello world');
@@ -54,6 +58,7 @@ io.on('connection', function (socket) {
 
 // TODO: Manage in a module
 subscriber.on('message', (channel, message) => {
+  // eslint-disable-next-line no-console
   console.log(`Message Received: ${message}`);
   // at the moment the channel is something like <userId>::<domain>::<channel>
   // this is no good for clients as they only register with domain
