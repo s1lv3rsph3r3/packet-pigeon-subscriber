@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  roles:
+    - { role: setup, tags: ['setup'] }
+
+    - { role: subscriber, tags: ['subscriber'] }
+
+    - { role: nginx, tags: ['nginx', 'web', 'http'] }

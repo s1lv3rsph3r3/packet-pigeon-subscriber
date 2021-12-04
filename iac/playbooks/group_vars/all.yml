@@ -1,0 +1,8 @@
+---
+# Initial Server Setup
+# TODO: Set the following vars to be from .env file
+# TODO:    - upstream_port
+remote_user: sammy
+remote_www_root: /var/www
+app_root_dir: 'packet-pigeon-subscriber'
+upstream_port: 3000

@@ -1,0 +1,69 @@
+---
+- name: Install acl
+  shell: apt install acl
+
+- name: Make sure the remote app root exists and has the right permissions
+  file:
+    path: '{{ remote_www_root }}/{{ app_root_dir }}'
+    state: directory
+    mode: '0755'
+    owner: '{{ remote_user }}'
+    group: '{{ remote_user }}'
+
+# TODO: This should use vars
+- name: Rsync application files to the remote server
+  synchronize:
+    src: '/home/runner/work/packet-pigeon-subscriber/packet-pigeon-subscriber'
+    dest: '{{ remote_www_root }}'
+    rsync_opts:
+      - '--no-motd'
+      - '--exclude=.git,vendor,tests,storage/logs/*,storage/framework/sessions/*,storage/framework/cache/*'
+
+- name: Set up .env file
+  template:
+    src: publisher-env.j2
+    dest: '{{ remote_www_root }}/{{ app_root_dir }}/.env'
+
+- name: install nodejs prerequisites
+  apt:
+    name:
+      - apt-transport-https
+      - gcc
+      - g++
+      - make
+    state: present
+- name: add nodejs apt key
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+- name: add nodejs repository
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_14.x {{ ansible_lsb.codename }} main
+    state: present
+    update_cache: yes
+- name: install nodejs
+  apt:
+    name: nodejs
+    state: present
+
+- name: Install PM2 Globally
+  command: 'npm install -g pm2'
+  tags: ['npm:pm2:global']
+
+- name: NPM install
+  command: 'npm ci'
+  args:
+    chdir: '{{ remote_www_root }}/{{ app_root_dir }}'
+  tags: ['npm:ci']
+
+- name: Start PM2
+  command: 'pm2 start index.js'
+  args:
+    chdir: '{{ remote_www_root }}/{{ app_root_dir }}'
+  tags: ['pm2:start:index.js']
+
+- name: Setup PM2 Systemd
+  command: 'pm2 startup systemd'
+
+- name: Set systemd to user
+  command: 'env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u {{ remote_user }} --hp /home/{{ remote_user }}'

@@ -1,0 +1,96 @@
+---
+#- name: Disable timers for unattended upgrade, so that none will be triggered by the `date -s` call.
+#  command: "systemctl disable --now {{item}}"
+#  with_items:
+#    - 'apt-daily.timer'
+#    - 'apt-daily-upgrade.timer'
+#
+#- name: Reload systemctl daemon to apply the new changes
+#  command: "systemctl daemon-reload"
+#
+#- name: Wait for any possibly running unattended upgrade to finish
+#  command: "systemd-run --property=\"After=apt-daily.service apt-daily-upgrade.service\" --wait /bin/true"
+#
+#- name: Purge unattended upgrades
+#  command: "apt-get -y purge unattended-upgrades"
+#
+#- name: Update apt cache
+#  command: "apt-get -y update"
+
+#- name: Install Prerequisites
+#  apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
+
+# Sudo Group Setup
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+# User + Key Setup
+- name: Create a new regular user with sudo privileges
+  user:
+    name: '{{ remote_user }}'
+    state: present
+    groups: wheel
+    append: true
+    create_home: true
+    shell: /bin/bash
+
+- name: adding existing user "{{ remote_user }}" to group www-data
+  user:
+    name: '{{ remote_user }}'
+    groups: www-data
+    append: yes
+
+- name: Set authorized key for remote user
+  authorized_key:
+    user: '{{ remote_user }}'
+    state: present
+    key: '{{ copy_local_key }}'
+
+- name: Disable password authentication for root
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin prohibit-password'
+
+# A common issue, particularly during early boot or at specific clock times
+# is that apt will be locked by another process, perhaps trying to autoupdate
+# or just a race condition on a thread. This work-around (which can also be
+# applied to any of the above statements) ensures that if there is a lock file
+# engaged, which is trapped by the `msg` value, triggers a repeat until the
+# lock file is released.
+- name: Install packages only when the apt process isn't locked
+  apt:
+    upgrade: full
+  register: apt_action
+  retries: 100
+  until: apt_action is success or ('Failed to lock apt for exclusive operation' not in apt_action.msg and '/var/lib/dpkg/lock' not in apt_action.msg)
+
+# Install Packages
+- name: Update apt
+  apt: update_cache=yes
+
+- name: Install required system packages
+  apt: name={{ sys_packages }} state=latest
+
+# UFW Setup
+- name: UFW - Allow SSH connections
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: UFW - Deny all other incoming traffic by default
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
